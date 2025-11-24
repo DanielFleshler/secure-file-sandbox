@@ -1,0 +1,50 @@
+# Docker Compose configuration for Secure File Sandbox
+version: '3.8'
+
+services:
+  # Main API service
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: secure-file-sandbox-api
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      - NODE_ENV=${NODE_ENV:-production}
+      - PORT=3000
+      - UPLOAD_DIR=/app/storage/uploads
+      - PROCESSED_DIR=/app/storage/processed
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+    volumes:
+      - ./storage:/app/storage
+      - ./logs:/app/logs
+      - /var/run/docker.sock:/var/run/docker.sock  # For spawning sandbox containers
+    networks:
+      - sandbox-network
+    restart: unless-stopped
+    # TODO: Add resource limits
+    # TODO: Add healthcheck
+
+  # Sandbox container (spawned dynamically by API)
+  # This is a template - actual instances created by sandboxService
+  sandbox:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: secure-file-sandbox:latest
+    # Containers spawned dynamically with specific configurations
+    # See sandboxService.js for runtime configuration
+
+networks:
+  sandbox-network:
+    driver: bridge
+    # TODO: Configure network isolation
+
+volumes:
+  storage-data:
+    driver: local
+  logs-data:
+    driver: local
+
+# TODO: Add development override file (docker-compose.dev.yml)
