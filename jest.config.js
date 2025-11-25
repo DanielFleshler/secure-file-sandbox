@@ -3,48 +3,53 @@
  */
 
 module.exports = {
-  // Test environment
-  testEnvironment: 'node',
+	// Test environment
+	testEnvironment: "node",
+	globals: {
+		localStorage: {
+			getItem: () => null,
+			setItem: () => {},
+			removeItem: () => {},
+			clear: () => {},
+		},
+	},
 
-  // Test match patterns
-  testMatch: [
-    '**/tests/**/*.test.js',
-    '**/tests/**/*.spec.js'
-  ],
+	// Test match patterns
+	testMatch: ["**/tests/**/*.test.js", "**/tests/**/*.spec.js"],
 
-  // Coverage configuration
-  collectCoverageFrom: [
-    'api/**/*.js',
-    'validators/**/*.js',
-    'sandbox/**/*.js',
-    'storage/**/*.js',
-    'config/**/*.js',
-    '!**/node_modules/**',
-    '!**/tests/**'
-  ],
+	// Coverage configuration
+	collectCoverageFrom: [
+		"api/**/*.js",
+		"validators/**/*.js",
+		"sandbox/**/*.js",
+		"storage/**/*.js",
+		"config/**/*.js",
+		"!**/node_modules/**",
+		"!**/tests/**",
+	],
 
-  // Coverage thresholds
-  coverageThresholds: {
-    global: {
-      branches: 70,
-      functions: 70,
-      lines: 70,
-      statements: 70
-    }
-  },
+	// Coverage thresholds
+	coverageThreshold: {
+		global: {
+			branches: 70,
+			functions: 70,
+			lines: 70,
+			statements: 70,
+		},
+	},
 
-  // Setup files
-  setupFilesAfterEnv: ['<rootDir>/tests/setup.js'],
+	// Setup files
+	//setupFilesAfterEnv: ["<rootDir>/tests/setup.js"],
 
-  // Test timeout
-  testTimeout: 30000,
+	// Test timeout
+	testTimeout: 30000,
 
-  // Verbose output
-  verbose: true,
+	// Verbose output
+	verbose: true,
 
-  // Clear mocks between tests
-  clearMocks: true,
+	// Clear mocks between tests
+	clearMocks: true,
 
-  // Force exit after tests complete
-  forceExit: true
+	// Force exit after tests complete
+	forceExit: true,
 };

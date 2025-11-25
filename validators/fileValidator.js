@@ -3,23 +3,32 @@
  * Validates uploaded files for security and compliance
  */
 
-const { fileTypeFromBuffer } = require('file-type');
-const path = require('path');
-const fs = require('fs').promises;
-const logger = require('../config/logger');
+const { fileTypeFromBuffer } = require("file-type");
+const path = require("path");
+const fs = require("fs").promises;
+const logger = require("../config/logger");
 
 // Whitelist of allowed file extensions
-const ALLOWED_EXTENSIONS = ['pdf', 'txt', 'jpg', 'jpeg', 'png', 'gif', 'doc', 'docx'];
+const ALLOWED_EXTENSIONS = [
+	"pdf",
+	"txt",
+	"jpg",
+	"jpeg",
+	"png",
+	"gif",
+	"doc",
+	"docx",
+];
 
 // Whitelist of allowed MIME types
 const ALLOWED_MIME_TYPES = [
-  'application/pdf',
-  'text/plain',
-  'image/jpeg',
-  'image/png',
-  'image/gif',
-  'application/msword',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+	"application/pdf",
+	"text/plain",
+	"image/jpeg",
+	"image/png",
+	"image/gif",
+	"application/msword",
+	"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 ];
 
 // Maximum file size (5MB)
@@ -31,13 +40,13 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024;
  * @returns {Promise<Object>} Validation result
  */
 async function validateFile(file) {
-  // TODO: Check if file exists
-  // TODO: Validate file size
-  // TODO: Validate file extension
-  // TODO: Read file buffer for magic number verification
-  // TODO: Verify MIME type matches file extension
-  // TODO: Check for path traversal attempts in filename
-  // TODO: Return validation result with details
+	// TODO: Check if file exists
+	// TODO: Validate file size
+	// TODO: Validate file extension
+	// TODO: Read file buffer for magic number verification
+	// TODO: Verify MIME type matches file extension
+	// TODO: Check for path traversal attempts in filename
+	// TODO: Return validation result with details
 }
 
 /**
@@ -46,8 +55,9 @@ async function validateFile(file) {
  * @returns {boolean} True if extension is allowed
  */
 function isExtensionAllowed(filename) {
-  // TODO: Extract extension
-  // TODO: Check against ALLOWED_EXTENSIONS
+	const ext = path.extname(filename).toLowerCase().slice(1);
+	if (!ext) return false;
+	return ALLOWED_EXTENSIONS.includes(ext);
 }
 
 /**
@@ -57,9 +67,9 @@ function isExtensionAllowed(filename) {
  * @returns {Promise<boolean>} True if magic number matches
  */
 async function verifyMagicNumber(buffer, expectedExtension) {
-  // TODO: Use file-type package to detect actual type
-  // TODO: Compare detected type with expected extension
-  // TODO: Return validation result
+	// TODO: Use file-type package to detect actual type
+	// TODO: Compare detected type with expected extension
+	// TODO: Return validation result
 }
 
 /**
@@ -68,10 +78,10 @@ async function verifyMagicNumber(buffer, expectedExtension) {
  * @returns {string} Sanitized filename
  */
 function sanitizeFilename(filename) {
-  // TODO: Remove path traversal sequences (../, ..\)
-  // TODO: Remove special characters
-  // TODO: Limit filename length
-  // TODO: Return sanitized filename
+	// TODO: Remove path traversal sequences (../, ..\)
+	// TODO: Remove special characters
+	// TODO: Limit filename length
+	// TODO: Return sanitized filename
 }
 
 /**
@@ -80,7 +90,7 @@ function sanitizeFilename(filename) {
  * @returns {boolean} True if size is acceptable
  */
 function isFileSizeValid(size) {
-  // TODO: Compare against MAX_FILE_SIZE
+	return size > 0 && size <= MAX_FILE_SIZE;
 }
 
 /**
@@ -89,18 +99,18 @@ function isFileSizeValid(size) {
  * @returns {Promise<Object>} Scan result
  */
 async function scanForMalware(filePath) {
-  // TODO: Mock virus scan result
-  // TODO: In production, integrate with VirusTotal, ClamAV, etc.
+	// TODO: Mock virus scan result
+	// TODO: In production, integrate with VirusTotal, ClamAV, etc.
 }
 
 module.exports = {
-  validateFile,
-  isExtensionAllowed,
-  verifyMagicNumber,
-  sanitizeFilename,
-  isFileSizeValid,
-  scanForMalware,
-  ALLOWED_EXTENSIONS,
-  ALLOWED_MIME_TYPES,
-  MAX_FILE_SIZE
+	validateFile,
+	isExtensionAllowed,
+	verifyMagicNumber,
+	sanitizeFilename,
+	isFileSizeValid,
+	scanForMalware,
+	ALLOWED_EXTENSIONS,
+	ALLOWED_MIME_TYPES,
+	MAX_FILE_SIZE,
 };
