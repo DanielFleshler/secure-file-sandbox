@@ -85,27 +85,31 @@ describe("File Validator", () => {
 		});
 	});
 
-  describe("sanitizeFilename", () => {
-      test("should remove path traversal sequences", () => {
-          expect(fileValidator.sanitizeFilename("../../etc/passwd")).toBe(???);
-          expect(fileValidator.sanitizeFilename("..\\..\\Windows\\System32")).toBe(???);
-      });
+	describe("sanitizeFilename", () => {
+		test("should remove path traversal sequences", () => {
+			expect(fileValidator.sanitizeFilename("../../etc/passwd")).toBe("passwd");
+			expect(fileValidator.sanitizeFilename("..\\..\\Windows\\System32")).toBe(
+				"System32"
+			);
+		});
 
-      test("should replace special characters", () => {
-          expect(fileValidator.sanitizeFilename("my|file<script>.pdf")).toBe(???);
-      });
+		test("should replace special characters", () => {
+			expect(fileValidator.sanitizeFilename("my|file<script>.pdf")).toBe(
+				"my_file_script_.pdf"
+			);
+		});
 
-      test("should clean up excessive dots", () => {
-          expect(fileValidator.sanitizeFilename("....pdf")).toBe(???);
-          expect(fileValidator.sanitizeFilename("file..pdf")).toBe(???);
-      });
+		test("should clean up excessive dots", () => {
+			expect(fileValidator.sanitizeFilename("....pdf")).toBe(".pdf");
+			expect(fileValidator.sanitizeFilename("file..pdf")).toBe("file.pdf");
+		});
 
-      test("should limit filename length", () => {
-          const longName = "a".repeat(150) + ".pdf";
-          const result = fileValidator.sanitizeFilename(longName);
-          expect(result.length).toBeLessThanOrEqual(100);
-      });
-  });
+		test("should limit filename length", () => {
+			const longName = "a".repeat(150) + ".pdf";
+			const result = fileValidator.sanitizeFilename(longName);
+			expect(result.length).toBeLessThanOrEqual(100);
+		});
+	});
 
 	describe("isFileSizeValid", () => {
 		test("should accept files under size limit", () => {
