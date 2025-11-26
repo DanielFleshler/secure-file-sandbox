@@ -3,7 +3,7 @@
  * Validates uploaded files for security and compliance
  */
 
-const { fileTypeFromBuffer } = require("file-type");
+const fileType = require("file-type");
 const path = require("path");
 const fs = require("fs").promises;
 const logger = require("../config/logger");
@@ -33,20 +33,59 @@ const ALLOWED_MIME_TYPES = [
 
 // Maximum file size (5MB)
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
+/**
+ *
+ * @param {String} sanitizedFilename
+ * @returns {Object} Validation success result
+ */
+function validationSuccess(sanitizedFilename) {
+	return {
+		valid: true,
+		sanitizedFilename,
+		message: "Validation successful",
+	};
+}
+/**
+ * @param {String} reason
+ * @returns {Object} Validation failure result
+ */
+
+function validationFailure(reason) {
+	return {
+		valid: false,
+		message: `${reason}`,
+	};
+}
 
 /**
  * Validate file meets security requirements
  * @param {Object} file - File object from multer
  * @returns {Promise<Object>} Validation result
  */
+
 async function validateFile(file) {
-	// TODO: Check if file exists
-	// TODO: Validate file size
-	// TODO: Validate file extension
-	// TODO: Read file buffer for magic number verification
-	// TODO: Verify MIME type matches file extension
-	// TODO: Check for path traversal attempts in filename
-	// TODO: Return validation result with details
+	if (!file) {
+		return validationFailure("No file was provided");
+	}
+	if (!isFileSizeValid(file.size)) {
+		return validationFailure("File exceeds maximum size of 5MB");
+	}
+	if (!isExtensionAllowed(file.originalname)) {
+		return validationFailure("Invalid file type");
+	}
+	const sanitizedFilename = sanitizeFilename(file.originalname);
+	if (!sanitizedFilename) {
+		return validationFailure("Invalid filename");
+	}
+
+	const magicNumberResult = await verifyMagicNumber(
+		file.buffer,
+		path.extname(sanitizedFilename).toLowerCase().slice(1)
+	);
+	if (!magicNumberResult) {
+		return validationFailure("Invalid or corrupted file, Please try again");
+	}
+	return validationSuccess(sanitizedFilename);
 }
 
 /**
@@ -67,9 +106,9 @@ function isExtensionAllowed(filename) {
  * @returns {Promise<boolean>} True if magic number matches
  */
 async function verifyMagicNumber(buffer, expectedExtension) {
-	// TODO: Use file-type package to detect actual type
-	// TODO: Compare detected type with expected extension
-	// TODO: Return validation result
+	const result = await fileType.fromBuffer(buffer);
+	if (!result) return false;
+	return result.ext.toLowerCase() === expectedExtension.toLowerCase();
 }
 
 /**
