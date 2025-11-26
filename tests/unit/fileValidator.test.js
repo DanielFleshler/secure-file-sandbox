@@ -100,7 +100,7 @@ describe("File Validator", () => {
 		});
 
 		test("should clean up excessive dots", () => {
-			expect(fileValidator.sanitizeFilename("....pdf")).toBe(".pdf");
+			expect(fileValidator.sanitizeFilename("....pdf")).toBe("pdf");
 			expect(fileValidator.sanitizeFilename("file..pdf")).toBe("file.pdf");
 		});
 
@@ -108,6 +108,12 @@ describe("File Validator", () => {
 			const longName = "a".repeat(150) + ".pdf";
 			const result = fileValidator.sanitizeFilename(longName);
 			expect(result.length).toBeLessThanOrEqual(100);
+		});
+
+		test("should return null for invalid filenames that become empty", () => {
+			expect(fileValidator.sanitizeFilename("../../")).toBe(null);
+			expect(fileValidator.sanitizeFilename("|||")).toBe(null);
+			expect(fileValidator.sanitizeFilename("...")).toBe(null);
 		});
 	});
 

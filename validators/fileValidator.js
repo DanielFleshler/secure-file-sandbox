@@ -78,10 +78,18 @@ async function verifyMagicNumber(buffer, expectedExtension) {
  * @returns {string} Sanitized filename
  */
 function sanitizeFilename(filename) {
-	// TODO: Remove path traversal sequences (../, ..\)
-	// TODO: Remove special characters
-	// TODO: Limit filename length
-	// TODO: Return sanitized filename
+	filename = filename.replace(/\\/g, "/");
+	let sanitized = path.basename(filename);
+	sanitized = sanitized
+		.trim()
+		.replace(/[^a-zA-Z0-9._ -]/g, "_") // only allowed chars
+		.replace(/\.{2,}/g, ".") // collapse multiple dots
+		.replace(/^\.+/, "") // strip leading dots
+		.slice(0, 100);
+	if (!sanitized) return null;
+	if (!/[a-zA-Z0-9]/.test(sanitized)) return null;
+
+	return sanitized;
 }
 
 /**
